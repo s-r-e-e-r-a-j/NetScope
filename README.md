@@ -105,6 +105,18 @@ When scanning the network, NetScope displays a table with device details:
 └───────────────┴───────────────────┴─────────────┴──────────────────┘
 ```
 
+## uninstallation
+```bash
+cd NetScope
+```
+```bash
+cd NetScope
+```
+```bash
+sudo python3 install.py
+```
+**Then Enter `n` for uninstall**
+
 ## Notes
 1.**Run with sudo**: NetScope requires root privileges to access network interfaces. Always run with sudo.
 
