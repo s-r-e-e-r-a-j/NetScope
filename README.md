@@ -75,7 +75,7 @@ Scan a network and save the output to a file:
 ```bash
 sudo netscope -r 192.168.1.0/24 -n eth0 -o results.txt
 ``` 
-### Filter by Manufacturer###
+### Filter by Manufacturer
 Only display devices from a specific manufacturer:
 
 ```bash
