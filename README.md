@@ -18,6 +18,8 @@ NetScope is a network scanning and monitoring Ethical Hacking tool designed to h
 - threading
 - ipaddress
 - time
+
+`in kali linux all required libraries for this tool to work are pre-installed.so don't need to install it on kalilinux` 
 ### Installation Steps
 
 1. **Clone the repository:**
@@ -29,6 +31,8 @@ git clone https://github.com/s-r-e-e-r-a-j/NetScope.git
 cd NetScope
 ``` 
 2.  **Install the required libraries using requirements.txt:**
+   
+   `in kali linux all required libraries for this tool to work are pre-installed.so don't need to install it on kalilinux` 
 
 ``` bash
 pip3 install -r requirements.txt
