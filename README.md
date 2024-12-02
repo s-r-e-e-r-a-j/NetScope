@@ -108,7 +108,7 @@ When scanning the network, NetScope displays a table with device details:
 ## Notes
 1.**Run with sudo**: NetScope requires root privileges to access network interfaces. Always run with sudo.
 
-2. **Internet Connection**: The tool uses an online service to identify device manufacturers. Ensure you have an active internet connection.
+2.**Internet Connection**: The tool uses an online service to identify device manufacturers. Ensure you have an active internet connection.
 
 
 ## License
