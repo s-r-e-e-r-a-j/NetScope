@@ -46,6 +46,7 @@ pip3 install -r requirements.txt
 
 ```bash
 sudo netscope [command line options]
+```
 
 ## Options
 
