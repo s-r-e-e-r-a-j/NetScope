@@ -20,7 +20,7 @@ NetScope is a network scanning and monitoring Ethical Hacking tool designed to h
 - time
 ### Installation Steps
 
-1. **Install the required libraries using requirements.txt:**
+1. **Clone the repository:**
 
 ```bash
 git clone https://github.com/s-r-e-e-r-a-j/NetScope.git
