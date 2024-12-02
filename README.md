@@ -33,7 +33,7 @@ cd NetScope
 ``` bash
 pip3 install -r requirements.txt
 ```
-3. **Install the tool on your system**
+3. **Install NetScope on your system**
    ```bash
    cd NetScope
    ```
