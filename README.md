@@ -1,5 +1,5 @@
 ## NetScope
-NetScope is a network scanning and monitoring tool designed to help users discover and monitor devices in their network. It provides useful information about each device, such as IP addresses, MAC addresses, device manufacturers, and packet sizes. With live monitoring and filtering capabilities, NetScope is perfect for home users, network admins, and IT enthusiasts.
+NetScope is a network scanning and monitoring Ethical Hacking tool designed to help users discover and monitor devices in their network. It provides useful information about each device, such as IP addresses, MAC addresses, device manufacturers, and packet sizes. With live monitoring and filtering capabilities, NetScope is perfect for home users, network admins, and IT enthusiasts.
 
 ## Features
 - **Network Scanning:** Quickly find devices in your network.
