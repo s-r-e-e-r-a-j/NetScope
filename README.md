@@ -59,3 +59,56 @@ sudo netscope [command line options]
 | `-o`, `--output`        | Save scan results to a specified file.                                     |
 | `-m`, `--manufacturer`  | Filter devices by manufacturer (e.g., `Apple`, `Samsung`).                 |
 | `-i`, `--interval`      | Set the refresh interval for live monitoring (default: 5 seconds).         |
+
+
+
+## Example Usage
+### Basic Network Scan
+Scan all devices within a subnet or IP range:
+
+```bash
+sudo netscope -r 192.168.1.0/24 -n eth0
+```
+### Save Scan Results to a File
+Scan a network and save the output to a file:
+
+```bash
+sudo netscope -r 192.168.1.0/24 -n eth0 -o results.txt
+``` 
+### Filter by Manufacturer###
+Only display devices from a specific manufacturer:
+
+```bash
+sudo netscope -r 192.168.1.0/24 -n eth0 -m "Apple"
+```
+### Enable Live Monitoring
+Continuously monitor the network for changes:
+
+```bash
+sudo netscope -r 192.168.1.0/24 -n eth0 -l
+```
+### Live Monitoring with a Custom Interval
+Set a custom refresh interval for live monitoring (e.g., 10 seconds):
+
+```bash
+sudo netscope -r 192.168.1.0/24 -n eth0 -l -i 10
+```
+## Output Example
+When scanning the network, NetScope displays a table with device details:
+
+```mathematica
+┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┓
+┃ IP Address    ┃ MAC Address       ┃ Packet Size ┃ Manufacturer     ┃
+┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━┩
+│ 192.168.1.10  │ 00:1A:2B:3C:4D:5E │ 128         │ Apple            │
+│ 192.168.1.15  │ 11:22:33:44:55:66 │ 128         │ Samsung          │
+└───────────────┴───────────────────┴─────────────┴──────────────────┘
+```
+
+## Notes
+1.**Run with sudo**: NetScope requires root privileges to access network interfaces. Always run with sudo.
+2. **Internet Connection**: The tool uses an online service to identify device manufacturers. Ensure you have an active internet connection.
+
+
+## License
+NetScope is licensed under the MIT License.
