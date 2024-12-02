@@ -49,10 +49,9 @@ sudo netscope [command line options]
 
 ## Options
 
-## Options  
 
-| Option                  | Description                                                                 |
-|-------------------------|-----------------------------------------------------------------------------|
+| Option                  | Description                                                                |
+|-------------------------|----------------------------------------------------------------------------|
 | `-r`, `--ip-range`      | Specify the target IP range or subnet to scan (e.g., `192.168.1.0/24`).    |
 | `-n`, `--interfaces`    | Specify the network interface(s) to use (e.g., `eth0`, `wlan0`).           |
 | `-l`, `--live`          | Enable live monitoring to track network devices in real-time.              |
