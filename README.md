@@ -34,12 +34,12 @@ cd NetScope
 pip3 install -r requirements.txt
 ```
 3. **Install NetScope on your system**
-   ```bash
-   cd NetScope
-   ```
-   ```bash
-   sudo python3 install.py
-   ```
+```bash
+cd NetScope
+ ```
+```bash
+sudo python3 install.py
+ ```
    **Then Enter `y` for install**
    
 4. **Make sure to run NetScope as sudo:**
