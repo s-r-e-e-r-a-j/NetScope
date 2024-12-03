@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# copyright of Sreeraj,2024
+# https://github.com/s-r-e-e-r-a-j
+
 import os
 import argparse
 from rich.console import Console
