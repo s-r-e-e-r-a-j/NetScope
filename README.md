@@ -26,19 +26,22 @@ NetScope is a network scanning and monitoring Ethical Hacking tool designed to h
 ```bash
 git clone https://github.com/s-r-e-e-r-a-j/NetScope.git
 ```
+2. **Navigate to the NetScope directory**
 ```bash
 cd NetScope
 ``` 
-2.  **Install the required libraries using requirements.txt:**
+3.  **Install the required libraries using requirements.txt:**
    
 
 ``` bash
 pip3 install -r requirements.txt
 ```
-3. **Install NetScope on your system**
+3. **Navigate to the NetScope directory**
 ```bash
 cd NetScope
  ```
+3. **Install NetScope on your system**
+
 ```bash
 sudo python3 install.py
  ```
