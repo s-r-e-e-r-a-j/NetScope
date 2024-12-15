@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# copyright of Sreeraj,2024
+# copyright © Sreeraj, 2024
 # https://github.com/s-r-e-e-r-a-j
 
 import os
