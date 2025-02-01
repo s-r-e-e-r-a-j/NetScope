@@ -15,4 +15,4 @@ if str(choice) =='Y' or str(choice)=='y':
 if str(choice)=='N' or str(choice)=='n':
     run('rm -r /usr/share/netscope ')
     run('rm /usr/bin/netscope ')
-    print('[!] now IpShifter  has been removed successfully')
+    print('[!] now NetScope  has been removed successfully')
