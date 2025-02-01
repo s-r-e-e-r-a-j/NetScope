@@ -1,8 +1,5 @@
 scapy
 rich
 requests
-os
 argparse
-threading
-time
 ipaddress
