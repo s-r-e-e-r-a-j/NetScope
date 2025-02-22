@@ -7,7 +7,8 @@ import os
 import argparse
 from rich.console import Console
 from rich.table import Table
-from scapy.all import ARP, Ether, srp
+from scapy.layers.l2 import ARP, Ether
+from scapy.sendrecv import srp
 import requests
 import threading
 import time
