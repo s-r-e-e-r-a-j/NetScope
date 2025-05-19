@@ -5,153 +5,130 @@
 
 import os
 import argparse
-from rich.console import Console
-from rich.table import Table
-from scapy.layers.l2 import ARP, Ether
-from scapy.sendrecv import srp
+import time
 import requests
 import threading
-import time
-import ipaddress
+from scapy.layers.l2 import ARP, Ether
+from scapy.sendrecv import srp
+from rich.console import Console
+from rich.table import Table
 
+__c = Console()
 
-class NetScope:
-    def __init__(self):
-        self.console = Console()
-        self.check_sudo()
+def __sudo_guard():
+    if os.geteuid() != 0:
+        __c.print("[bold red]Permission Denied:[/] Run as [bold]root[/bold] or with [bold]sudo[/bold].")
+        exit()
 
-    def check_sudo(self):
-        """Exit if the script is not run as root or with sudo."""
-        if os.geteuid() != 0:
-            self.console.print("[bold red]Error:[/] This tool requires root privileges. Please run with [bold]sudo[/bold].")
+def __resolve_mac(mac):
+    try:
+        r = requests.get(f"https://api.macvendors.com/{mac}")
+        return r.text.strip() if r.status_code == 200 else "Unknown"
+    except:
+        return "Unknown"
+
+def __query_lan(ipmask, nic):
+    packet = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=ipmask)
+    try:
+        resp, _ = srp(packet, iface=nic, timeout=3, verbose=0)
+    except OSError as e:
+        if "No such device" in str(e):
+            __c.print(f"[bold red]Invalid Interface:[/] '{nic}' does not exist.")
+            exit()
+        else:
+            raise
+
+    found = []
+    for _, res in resp:
+        mac = res.hwsrc
+        vendor = __resolve_mac(mac)
+        found.append({
+            "ip": res.psrc,
+            "mac": mac,
+            "manu": vendor,
+            "size": len(_) + len(res)
+        })
+    return found
+
+def __refine(devs, filt=None):
+    return [d for d in devs if not filt or d['manu'].lower() == filt.lower()]
+
+def __save(devs, path):
+    with open(path, 'a') as out:
+        for d in devs:
+            out.write(f"IP Address: {d['ip']}\n")
+            out.write(f"MAC Address: {d['mac']}\n")
+            out.write(f"Manufacturer: {d['manu']}\n")
+            out.write(f"Packet Size: {d['size']} bytes\n\n")
+
+def __banner(devs):
+    tab = Table(show_header=True, header_style="bold cyan")  # Changed header color
+    tab.add_column("IP Address", style="bold magenta")       # New color
+    tab.add_column("MAC Address", style="bold white")        # New color
+    tab.add_column("Packet Size", style="bold green")        # Retained for contrast
+    tab.add_column("Manufacturer", style="bold blue")        # New color
+
+    for d in devs:
+        tab.add_row(d['ip'], d['mac'], str(d['size']), d['manu'])
+    __c.print(tab)
+
+def __track(ipblocks, ifcs, path=None, vendor=None, pace=5):
+    prev = []
+    while True:
+        for net in ipblocks:
+            for i in ifcs:
+                now = __query_lan(net, i)
+                unseen = [x for x in now if x not in prev]
+                if unseen and path:
+                    __save(unseen, path)
+                    prev.extend(unseen)
+                screen = __refine(now, vendor)
+                __c.clear()
+                __banner(screen)
+                time.sleep(pace)
+
+def __launch():
+    a = __get_args()
+    nets = a.ip_range
+    devs = a.interfaces
+    out = a.output
+    man = a.manufacturer
+    wait = a.interval
+
+    inventory = []
+    for net in nets:
+        for d in devs:
+            inventory += __query_lan(net, d)
+
+    relevant = __refine(inventory, man)
+    __banner(relevant)
+
+    if out:
+        __save(relevant, out)
+        __c.print(f"\n[bold green]Saved to:[/] {out}")
+
+    if a.live:
+        live = threading.Thread(target=__track, args=(nets, devs, out, man, wait))
+        live.daemon = True
+        live.start()
+        try:
+            while live.is_alive():
+                time.sleep(1)
+        except KeyboardInterrupt:
+            __c.print("\n[bold red]Cancelled by user.[/]")
             exit()
 
-    def scan_network(self, ip_range, interface):
-        arp_request = ARP(pdst=ip_range)
-        ethernet_frame = Ether(dst="ff:ff:ff:ff:ff:ff")
-        request_packet = ethernet_frame / arp_request
-
-        try:
-            responses = srp(request_packet, timeout=3, verbose=0, iface=interface)[0]
-        except OSError as e:
-            if "No such device" in str(e):
-                self.console.print(f"[bold red]Invalid Interface:[/] The interface '{interface}' does not exist.")
-                exit()
-            else:
-                raise
-
-        devices = []
-        for sent, received in responses:
-            mac_address = received.hwsrc
-            manufacturer_name = self.get_manufacturer_name(mac_address)
-            packet_size = len(sent) + len(received)
-            devices.append({'ip': received.psrc, 'mac': mac_address, 'manufacturer': manufacturer_name, 'packet_size': packet_size})
-
-        return devices
-
-    def get_manufacturer_name(self, mac):
-        try:
-            response = requests.get(f"https://api.macvendors.com/{mac}")
-            return response.text.strip() if response.status_code == 200 else "Unknown"
-        except requests.RequestException:
-            return "Unknown"
-
-    def filter_results(self, devices, manufacturer_filter=None):
-        return [
-            device for device in devices
-            if not manufacturer_filter or device['manufacturer'].lower() == manufacturer_filter.lower()
-        ]
-
-    def live_scan(self, ip_ranges, network_interfaces, save_file=None, manufacturer_filter=None, interval=5):
-        known_devices = []
-        while True:
-            for ip_range in ip_ranges:
-                for interface in network_interfaces:
-                    current_devices = self.scan_network(ip_range, interface)
-
-                    new_devices = [device for device in current_devices if device not in known_devices]
-                    if new_devices and save_file:
-                        self.save_to_file(new_devices, save_file)
-                        known_devices.extend(new_devices)
-
-                    filtered_devices = self.filter_results(current_devices, manufacturer_filter)
-
-                    self.console.clear()
-                    table = Table(show_header=True, header_style="bold magenta")
-                    table.add_column("IP Address", style="bold red")
-                    table.add_column("MAC Address", style="bold blue")
-                    table.add_column("Packet Size", style="bold green")
-                    table.add_column("Manufacturer", style="bold yellow")
-
-                    for device in filtered_devices:
-                        table.add_row(device['ip'], device['mac'], str(device['packet_size']), device['manufacturer'])
-
-                    self.console.print(table)
-                    time.sleep(interval)
-
-    def save_to_file(self, devices, filepath):
-        with open(filepath, 'a') as file:
-            for device in devices:
-                file.write(f"IP Address: {device['ip']}\n")
-                file.write(f"MAC Address: {device['mac']}\n")
-                file.write(f"Manufacturer: {device['manufacturer']}\n")
-                file.write(f"Packet Size: {device['packet_size']} bytes\n\n")
-
-    def run(self):
-        try:
-            args = self.parse_arguments()
-            ip_ranges = args.ip_range
-            interfaces = args.interfaces
-            track_live = args.live
-            output_path = args.output
-            manufacturer_filter = args.manufacturer
-            scan_interval = args.interval
-
-            all_devices = []
-            for ip_range in ip_ranges:
-                for interface in interfaces:
-                    all_devices.extend(self.scan_network(ip_range, interface))
-
-            table = Table(show_header=True, header_style="bold magenta")
-            table.add_column("IP Address", style="bold red")
-            table.add_column("MAC Address", style="bold blue")
-            table.add_column("Packet Size", style="bold green")
-            table.add_column("Manufacturer", style="bold yellow")
-
-            filtered_devices = self.filter_results(all_devices, manufacturer_filter)
-
-            for device in filtered_devices:
-                table.add_row(device['ip'], device['mac'], str(device['packet_size']), device['manufacturer'])
-
-            self.console.print(table)
-
-            if output_path:
-                self.save_to_file(filtered_devices, output_path)
-                self.console.print(f"\n[bold green]Results saved to {output_path}")
-
-            if track_live:
-                live_thread = threading.Thread(target=self.live_scan,
-                                               args=(ip_ranges, interfaces, output_path, manufacturer_filter, scan_interval))
-                live_thread.daemon = True
-                live_thread.start()
-
-                while live_thread.is_alive():
-                    time.sleep(1)
-
-        except KeyboardInterrupt:
-            self.console.print("\n[bold red]User interrupted. Exiting...")
-
-    def parse_arguments(self):
-        parser = argparse.ArgumentParser(description="NetScope: A tool for network scanning and monitoring.")
-        parser.add_argument("-r", "--ip-range", help="Target IP range or subnet (e.g., 192.168.1.0/24)", nargs='+', required=True)
-        parser.add_argument("-n", "--interfaces", help="Network interface(s) to use (e.g., eth0, wlan0)", nargs='+', required=True)
-        parser.add_argument("-l", "--live", action="store_true", help="Enable live monitoring of devices.")
-        parser.add_argument("-o", "--output", help="File to save the results.")
-        parser.add_argument("-m", "--manufacturer", help="Filter results by manufacturer name (e.g., Apple).")
-        parser.add_argument("-i", "--interval", type=int, default=5, help="Refresh interval for live monitoring (default: 5 seconds).")
-        return parser.parse_args()
+def __get_args():
+    p = argparse.ArgumentParser(description="Network Info Scanner")
+    p.add_argument("-r", "--ip-range", nargs='+', required=True, help="CIDR range(s) to scan.")
+    p.add_argument("-n", "--interfaces", nargs='+', required=True, help="Interface(s) like eth0/wlan0.")
+    p.add_argument("-l", "--live", action="store_true", help="Enable real-time monitoring.")
+    p.add_argument("-o", "--output", help="File path to store output.")
+    p.add_argument("-m", "--manufacturer", help="Filter by manufacturer name.")
+    p.add_argument("-i", "--interval", type=int, default=5, help="Interval in seconds for live scan.")
+    return p.parse_args()
 
 
 if __name__ == "__main__":
-    netscope = NetScope()
-    netscope.run()
+    __sudo_guard()
+    __launch()
