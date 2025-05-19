@@ -62,11 +62,11 @@ def __save(devs, path):
             out.write(f"Packet Size: {d['size']} bytes\n\n")
 
 def __banner(devs):
-    tab = Table(show_header=True, header_style="bold cyan")  # Changed header color
-    tab.add_column("IP Address", style="bold magenta")       # New color
-    tab.add_column("MAC Address", style="bold white")        # New color
-    tab.add_column("Packet Size", style="bold green")        # Retained for contrast
-    tab.add_column("Manufacturer", style="bold blue")        # New color
+    tab = Table(show_header=True, header_style="bold cyan")  
+    tab.add_column("IP Address", style="bold magenta")       
+    tab.add_column("MAC Address", style="bold white")        
+    tab.add_column("Packet Size", style="bold green")        
+    tab.add_column("Manufacturer", style="bold blue")        
 
     for d in devs:
         tab.add_row(d['ip'], d['mac'], str(d['size']), d['manu'])
