@@ -16,6 +16,9 @@ NetScope is a network scanning and monitoring Ethical Hacking tool designed to h
 - argparse
 - ipaddress
 
+## Compatibility
+- Linux (Debian, RedHat, Arch)
+
 ### Installation Steps
 
 1. **Clone the repository:**
