@@ -7,6 +7,10 @@ NetScope is a network scanning and monitoring Ethical Hacking tool designed to h
 - **Live Monitoring:** Continuously track devices on your network with live updates.
 - **Manufacturer Filter:** View devices from a specific manufacturer (e.g., Apple, Samsung).
 - **Save Results:** Export scan results to a file for later use.
+
+## Compatibility
+- Linux (Debian, RedHat, Arch)
+  
 ## Installation
 - Python 3.x installed on your system.
 - The following Python libraries:
@@ -15,9 +19,6 @@ NetScope is a network scanning and monitoring Ethical Hacking tool designed to h
 - requests
 - argparse
 - ipaddress
-
-## Compatibility
-- Linux (Debian, RedHat, Arch)
 
 ### Installation Steps
 
