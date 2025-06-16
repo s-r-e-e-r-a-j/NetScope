@@ -3,7 +3,7 @@ choice = input('[+] to install press (Y) to uninstall press (N) >> ')
 run = os.system
 if str(choice) =='Y' or str(choice)=='y':
 
-    run('chmod 777 netscope.py')
+    run('chmod 755 netscope.py')
     run('mkdir /usr/share/netscope')
     run('cp netscope.py /usr/share/netscope/netscope.py')
 
