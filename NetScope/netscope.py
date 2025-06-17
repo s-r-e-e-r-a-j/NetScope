@@ -35,7 +35,7 @@ def __vendor(mac):
 def __scan(ipr, iface):
     pkt = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=ipr)
     try:
-        res, _ = srp(pkt, iface=iface, timeout=3, verbose=0, retry=3)
+        res, _ = srp(pkt, iface=iface, timeout=3, verbose=0)
     except OSError as e:
         if "No such device" in str(e): __c.print(f"[red]Interface '{iface}' not found.[/red]"); exit()
         else: raise
