@@ -11,7 +11,7 @@ from rich.table import Table
 
 __c = Console()
 
-# Point to a local IEEE OUI database file (download: https://standards-oui.ieee.org/oui/oui.txt)
+# Point to a local IEEE OUI database file 
 OUI_PATH = os.environ.get("OUI_DB", "/usr/share/netscope/database/oui.txt")
 
 @lru_cache(maxsize=1)
