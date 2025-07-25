@@ -3,12 +3,35 @@
 # copyright © Sreeraj, 2024
 # https://github.com/s-r-e-e-r-a-j
 
-import os, argparse, time, threading, requests, ipaddress
+import os, argparse, time, threading, requests, ipaddress, re
+from functools import lru_cache
 from scapy.all import ARP, Ether, srp
 from rich.console import Console
 from rich.table import Table
 
 __c = Console()
+
+# Point to a local IEEE OUI database file (download: https://standards-oui.ieee.org/oui/oui.txt)
+OUI_PATH = os.environ.get("OUI_DB", "/home/kali/Desktop/oui.txt")
+
+@lru_cache(maxsize=1)
+def __load_oui_db(path: str = OUI_PATH):
+
+   # Load and cache the IEEE OUI database (oui.txt).
+   # Expected line format example:
+    #  'F0-8E-4A   (hex)        Samsung Electronics Co.,Ltd'
+
+    vendors = {}
+    try:
+        with open(path, "r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                m = re.match(r"^([0-9A-F\-]{8})\s+\(hex\)\s+(.+)$", line.strip(), re.I)
+                if m:
+                    prefix = m.group(1).replace("-", ":").upper()  # e.g. F0:8E:4A
+                    vendors[prefix] = m.group(2).strip()
+    except FileNotFoundError:
+        pass
+    return vendors
 
 def __args():
     p = argparse.ArgumentParser(description="Scan LAN for connected devices with optional live tracking.")
@@ -25,20 +48,35 @@ def __check_root():
         __c.print("[red]Error: Root required. Use sudo.[/red]")
         exit()
 
-def __vendor(mac):
+def __is_local_mac(mac: str) -> bool:
+    """
+    Returns True if the MAC address is locally administered (randomized).
+    (Second least significant bit of the first byte is set.)
+    """
     try:
-        r = requests.get(f"https://api.macvendors.com/{mac}", timeout=2)
-        return r.text.strip() if r.status_code == 200 else "Unknown"
-    except:
-        return "Unknown"
+        first_byte = int(mac.split(":")[0], 16)
+        return bool(first_byte & 0b00000010)
+    except Exception:
+        return False
+
+def __vendor(mac):
+    db = __load_oui_db()
+    prefix = mac.upper().replace("-", ":")[:8]  # First 3 octets
+    vendor = db.get(prefix, "Unknown")
+    if vendor == "Unknown" and __is_local_mac(mac):
+        return "Locally Administered (Randomized)"
+    return vendor
 
 def __scan(ipr, iface):
     pkt = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=ipr)
     try:
         res, _ = srp(pkt, iface=iface, timeout=3, verbose=0, retry=1)
     except OSError as e:
-        if "No such device" in str(e): __c.print(f"[red]Interface '{iface}' not found.[/red]"); exit()
-        else: raise
+        if "No such device" in str(e):
+            __c.print(f"[red]Interface '{iface}' not found.[/red]")
+            exit()
+        else:
+            raise
     devs = []
     for s, r in res:
         mac, ip = r.hwsrc, r.psrc
@@ -70,7 +108,9 @@ def __live(iprs, ifs, fout, fvend, interval):
             for iface in ifs:
                 now = __scan(ipr, iface)
                 new = [d for d in now if d not in mem]
-                if fout and new: __save(new, fout); mem.extend(new)
+                if fout and new:
+                    __save(new, fout)
+                    mem.extend(new)
                 final = __filter(now, fvend)
                 __c.clear()
                 __table(final)
@@ -85,13 +125,16 @@ def __main():
             seen.extend(__scan(i, n))
     result = __filter(seen, a.manufacturer)
     __table(result)
-    if a.output: __save(result, a.output); __c.print(f"[green]Saved to {a.output}[/green]")
+    if a.output:
+        __save(result, a.output)
+        __c.print(f"[green]Saved to {a.output}[/green]")
     if a.live:
         t = threading.Thread(target=__live, args=(a.ip_range, a.interfaces, a.output, a.manufacturer, a.interval))
         t.daemon = True
         t.start()
         try:
-            while t.is_alive(): time.sleep(1)
+            while t.is_alive():
+                time.sleep(1)
         except KeyboardInterrupt:
             __c.print("\n[red]Interrupted. Exiting...[/red]")
 
