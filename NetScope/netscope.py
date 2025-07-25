@@ -49,10 +49,10 @@ def __check_root():
         exit()
 
 def __is_local_mac(mac: str) -> bool:
-    """
-    Returns True if the MAC address is locally administered (randomized).
-    (Second least significant bit of the first byte is set.)
-    """
+    
+   #  Returns True if the MAC address is locally administered (randomized).
+   #  (Second least significant bit of the first byte is set.)
+   
     try:
         first_byte = int(mac.split(":")[0], 16)
         return bool(first_byte & 0b00000010)
