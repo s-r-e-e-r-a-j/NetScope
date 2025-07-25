@@ -7,8 +7,8 @@ if str(choice) =='Y' or str(choice)=='y':
     run('mkdir /usr/share/netscope')
     run('mkdir /usr/shre/netscope/database')
     run('cp netscope.py /usr/share/netscope/netscope.py')
-    run('chmod 644 /NetScope/database/oui.txt')
-    run('cp /NetScope/database/oui.txt /usr/share/netscope/database/oui.txt')
+    run('chmod 644 /database/oui.txt')
+    run('cp /database/oui.txt /usr/share/netscope/database/oui.txt')
 
     cmnd=(' #! /bin/sh \n exec python3 /usr/share/netscope/netscope.py "$@"')
     with open('/usr/bin/netscope','w')as file:
