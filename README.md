@@ -124,11 +124,6 @@ sudo python3 install.py
 ```
 **Then Enter `n` for uninstall**
 
-## Notes
-1.**Run with sudo**: NetScope requires root privileges to access network interfaces. Always run with sudo.
-
-2.**Internet Connection**: The tool uses an online service to identify device manufacturers. Ensure you have an active internet connection.
-
 
 ## License
 NetScope is licensed under the MIT License.
