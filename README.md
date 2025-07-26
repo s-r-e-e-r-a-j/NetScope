@@ -17,7 +17,6 @@ NetScope is a network scanning and monitoring Ethical Hacking tool designed to h
 - scapy
 - rich
 - re
-- requests
 - argparse
 - ipaddress
 
