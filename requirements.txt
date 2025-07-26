@@ -1,4 +1,2 @@
 scapy
 rich
-argparse
-ipaddress
