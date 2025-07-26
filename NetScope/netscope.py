@@ -3,7 +3,7 @@
 # copyright © Sreeraj, 2024
 # https://github.com/s-r-e-e-r-a-j
 
-import os, argparse, time, threading, requests, ipaddress, re
+import os, argparse, time, threading, ipaddress, re
 from functools import lru_cache
 from scapy.all import ARP, Ether, srp
 from rich.console import Console
