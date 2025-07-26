@@ -16,10 +16,7 @@ NetScope is a network scanning and monitoring Ethical Hacking tool designed to h
 - The following Python libraries:
 - scapy
 - rich
-- re
-- argparse
-- ipaddress
-
+  
 ### Installation Steps
 
 1. **Clone the repository:**
