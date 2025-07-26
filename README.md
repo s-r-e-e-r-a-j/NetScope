@@ -12,7 +12,7 @@ NetScope is a network scanning and monitoring Ethical Hacking tool designed to h
 - Linux (Debian, RedHat, Arch)
   
 ## Installation
-- Python 3.x installed on your system.
+- Python 3.8 or newer installed on your system.
 - The following Python libraries:
 - scapy
 - rich
