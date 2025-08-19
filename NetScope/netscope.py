@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# copyright © Sreeraj, 2024
-# https://github.com/s-r-e-e-r-a-j
+# Developer: Sreeraj
+# GitHub: https://github.com/s-r-e-e-r-a-j
 
 import os, argparse, time, threading, ipaddress, re
 from functools import lru_cache
@@ -140,3 +140,4 @@ def __main():
 
 if __name__ == "__main__":
     __main()
+
