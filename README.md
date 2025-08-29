@@ -30,7 +30,7 @@ cd NetScope
 ``` 
 3.  **Install the required libraries using requirements.txt:**
    
-``` bash
+```bash
 pip3 install -r requirements.txt
 ```
 **Note for Kali, Parrot, Ubuntu 23.04+ users:**
