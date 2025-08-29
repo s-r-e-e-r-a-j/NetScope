@@ -30,7 +30,6 @@ cd NetScope
 ``` 
 3.  **Install the required libraries using requirements.txt:**
    
-
 ``` bash
 pip3 install -r requirements.txt
 ```
