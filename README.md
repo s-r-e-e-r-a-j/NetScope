@@ -41,8 +41,10 @@ error: externally-managed-environment
 ```
 then use:
 ```bash
-pip3 install -r requirements.txt --break-system-packages
+PYVER=$(python3 -c "import sys; print(f'{sys.version_info[0]}.{sys.version_info[1]}')")
+sudo pip3 install -r requirements.txt --target /usr/local/lib/python${PYVER}/dist-packages --break-system-packages
 ```
+*Then press enter*
 
 4. **Navigate to the NetScope directory**
 ```bash
