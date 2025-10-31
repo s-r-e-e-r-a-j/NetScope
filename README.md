@@ -135,8 +135,3 @@ sudo python3 install.py
 
 ## License
 NetScope is licensed under the MIT License.
-
-## Author
-- **Sreeraj**
-  
-GitHub: https://github.com/s-r-e-e-r-a-j
